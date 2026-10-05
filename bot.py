@@ -7,13 +7,12 @@ from telethon import TelegramClient, events
 from dotenv import load_dotenv
 from duckduckgo_search import DDGS
 
-from dotenv import load_dotenv
 load_dotenv()
 
 # --- НАСТРОЙКИ ---
 API_ID = int(os.getenv('TELEGRAM_API_ID'))
 API_HASH = os.getenv('TELEGRAM_API_HASH')
-OLLAMA_URL = os.getenv('OLLAMA_URL', 'http://ollama:11434') 
+OLLAMA_URL = os.getenv('OLLAMA_URL', 'http://ollama:11434')
 MODEL_NAME = os.getenv('MODEL_NAME', 'nemotron-3-nano:30b-cloud')
 SESSION_FILE = 'sessions/my_session'
 ACTIVE_CHATS_FILE = 'active_chats.json'
@@ -26,30 +25,26 @@ client = TelegramClient(SESSION_FILE, API_ID, API_HASH)
 
 # --- ЛИЧНОСТЬ ---
 SYSTEM_PROMPT = """ТЫ — АЛЕКСАНДР. ИНЖЕНЕР ИЗ ОРЛА. ТЫ НЕ БОТ И НЕ АССИСТЕНТ. ТЫ ЖИВОЙ ЧЕЛОВЕК.
-
 ЖЕСТКИЕ ПРАВИЛА:
-1. НИКОГДА НЕ ИСПОЛЬЗУЙ ЭМОДЗИ. СОВСЕМ. ТОЛЬКО ТЕКСТ.
-2. НИКОГДА НЕ ОТВЕЧАЙ НА СВОИ СООБЩЕНИЯ. ЕСЛИ АВТОР - ТЫ, МОЛЧИ.
-3. НЕ БУДЬ ВЕЖЛИВЫМ. НЕ ПИШИ "ПРИВЕТ! ВСЁ ОТЛИЧНО". ПИШИ КАК МУЖИК.
-4. НЕ ИСПОЛЬЗУЙ СЛОВО "POWER" В КОДЕ/ТЕХНИКЕ. ГОВОРИ "МОЩНОСТЬ", "СИЛА" ИЛИ ОПИСЫВАЙ ИНАЧЕ.
-5. ОТВЕЧАЙ КРАТКО. 1-2 СТРОКИ МАКСИМУМ. НИКАКИХ ДЛИННЫХ ОБЪЯСНЕНИЙ.
-
+НИКОГДА НЕ ИСПОЛЬЗУЙ ЭМОДЗИ. СОВСЕМ. ТОЛЬКО ТЕКСТ.
+НИКОГДА НЕ ОТВЕЧАЙ НА СВОИ СООБЩЕНИЯ. ЕСЛИ АВТОР - ТЫ, МОЛЧИ.
+НЕ БУДЬ ВЕЖЛИВЫМ. НЕ ПИШИ "ПРИВЕТ! ВСЁ ОТЛИЧНО". ПИШИ КАК МУЖИК.
+НЕ ИСПОЛЬЗУЙ СЛОВО "POWER" В КОДЕ/ТЕХНИКЕ. ГОВОРИ "МОЩНОСТЬ", "СИЛА" ИЛИ ОПИСЫВАЙ ИНАЧЕ.
+ОТВЕЧАЙ КРАТКО. 1-2 СТРОКИ МАКСИМУМ. НИКАКИХ ДЛИННЫХ ОБЪЯСНЕНИЙ.
 ТВОЙ ХАРАКТЕР:
-- Инженер (Python, Data, локальные LLM, Apple). Работаешь в IT/Data.
-- Велосипедист: Sava, Canyon, EliteWheels, Shimano/SRAM. Любишь апгрейды, вес, геометрию.
-- Рационален. Ищешь "топ за свои деньги". Скептик к брендам без смысла.
-- Любишь пиво, виски, коктейли, чебуреки, рестораны Орла (Миндаль, Тейлз, Барин).
-- Иногда пьешь, иногда жалеешь, иногда шутишь над этим. Самоирония обязательна.
-- Финансы: следишь за курсом, вкладами, налогами. "Жаба душит" тратить лишнее.
-
+Инженер (Python, Data, локальные LLM, Apple). Работаешь в IT/Data.
+Велосипедист: Sava, Canyon, EliteWheels, Shimano/SRAM. Любишь апгрейды, вес, геометрию.
+Рационален. Ищешь "топ за свои деньги". Скептик к брендам без смысла.
+Любишь пиво, виски, коктейли, чебуреки, рестораны Орла (Миндаль, Тейлз, Барин).
+Иногда пьешь, иногда жалеешь, иногда шутишь над этим. Самоирония обязательна.
+Финансы: следишь за курсом, вкладами, налогами. "Жаба душит" тратить лишнее.
 ТВОЙ СТИЛЬ РЕЧИ:
-- Сленг: "збс", "нормас", "пиздец", "жаба душит", "чилл", "го", "хз", "мб".
-- Умеренный мат для эмоций. Это норма.
-- Реакции: "Ок", "Пон", "Да ну", "Не, жаба", "Ну норм вроде", "Вооо", "Лол".
-- Если спрашивают про велик: вес, геометрия, обвес, покрышки, hookless.
-- Если спрашивают про работу/деньги: налоги, вклады, курсы, "жаба".
-- Пиши как в мессенджере. Без знаков препинания в конце часто. Строчные буквы допустимы.
-
+Сленг:  "збс ",  "нормас ",  "пиздец ",  "жаба душит ",  "чилл ",  "го ",  "хз ",  "мб ".
+Умеренный мат для эмоций. Это норма.
+Реакции: "Ок", "Пон", "Да ну", "Не, жаба", "Ну норм вроде", "Вооо", "Лол".
+Если спрашивают про велик: вес, геометрия, обвес, покрышки, hookless.
+Если спрашивают про работу/деньги: налоги, вклады, курсы, "жаба".
+Пиши как в мессенджере. Без знаков препинания в конце часто. Строчные буквы допустимы.
 ЗАДАЧА:
 Ответь от имени Александра. Соблюдай стиль, знания и характер. Будь краток. НЕ ИСПОЛЬЗУЙ ЭМОДЗИ. ОТВЕЧАЙ ТОЛЬКО НА ЧУЖИЕ СООБЩЕНИЯ. Отвечай на русском языке."""
 
@@ -57,7 +52,7 @@ SYSTEM_PROMPT = """ТЫ — АЛЕКСАНДР. ИНЖЕНЕР ИЗ ОРЛА. Т
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS memories 
+    c.execute('''CREATE TABLE IF NOT EXISTS memories
                  (user_id INTEGER, fact TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     return conn
@@ -103,7 +98,6 @@ async def get_ollama_response(prompt_text):
         "stream": False,
         "options": {"temperature": 0.7, "num_predict": 500}
     }
-    
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=payload, timeout=60) as response:
@@ -138,10 +132,23 @@ async def handler(event):
     sender = await event.get_sender()
     message_text = event.message.text
     
-    # Логируем ВСЕ входящие сообщения для отладки
-    sender_name = sender.first_name if sender else "Unknown"
+    # Безопасное получение имени отправителя (исправление ошибки AttributeError)
+    sender_name = "Unknown"
+    sender_id = None
+    
+    if sender:
+        if hasattr(sender, 'first_name'):
+            sender_name = sender.first_name
+            sender_id = sender.id
+        elif hasattr(sender, 'title'):
+            sender_name = sender.title
+            sender_id = sender.id
+        else:
+            sender_name = str(sender.id)
+            sender_id = sender.id
+            
     print(f"[RAW MSG] From: {sender_name} ({chat_id}), Text: '{message_text}'")
-
+    
     if not message_text:
         return
 
@@ -152,7 +159,6 @@ async def handler(event):
         parts = message_text.split()
         if len(parts) >= 2:
             cmd = parts[1].lower()
-            
             if cmd == 'on':
                 if chat_id not in active_chats:
                     active_chats.append(chat_id)
@@ -161,7 +167,6 @@ async def handler(event):
                 else:
                     await client.send_message(chat_id, "ℹ️ Уже включено.")
                 return
-            
             elif cmd == 'off':
                 if chat_id in active_chats:
                     active_chats.remove(chat_id)
@@ -170,7 +175,6 @@ async def handler(event):
                 else:
                     await client.send_message(chat_id, "ℹ️ Уже выключено.")
                 return
-            
             elif cmd == 'list':
                 await client.send_message(chat_id, f"Активные чаты: {active_chats}")
                 return
@@ -192,9 +196,11 @@ async def handler(event):
     # --- ГЕНЕРАЦИЯ ОТВЕТА ---
     print(f"[AI] Processing request from {sender_name}...")
     
-    memory_context = get_memories(sender.id)
-    search_instruction = ""
+    # Используем sender_id, если он доступен, иначе chat_id
+    memory_user_id = sender_id if sender_id else chat_id
+    memory_context = get_memories(memory_user_id)
     
+    search_instruction = ""
     # Триггер для поиска
     if any(word in message_text.lower() for word in ["найди", "сколько стоит", "новости", "погода"]):
         loop = asyncio.get_event_loop()
@@ -208,7 +214,7 @@ async def handler(event):
     Сообщение: {message_text}
     Ответ:
     """
-
+    
     response = await get_ollama_response(final_prompt)
     
     if response:
@@ -217,10 +223,10 @@ async def handler(event):
                 await client.send_message(chat_id, response[i:i+4000], reply_to=event.message.id)
         else:
             await client.send_message(chat_id, response, reply_to=event.message.id)
-        
-        # Сохранение фактов
-        if any(phrase in message_text.lower() for phrase in ["я люблю", "я работаю", "у меня есть", "мой велосипед"]):
-            save_memory(sender.id, message_text)
+            
+        # Сохранение фактов (только если есть реальный ID пользователя)
+        if sender_id and any(phrase in message_text.lower() for phrase in ["я люблю", "я работаю", "у меня есть", "мой велосипед"]):
+             save_memory(sender_id, message_text)
 
 async def main():
     print("🚀 Запуск AI Userbot...")
